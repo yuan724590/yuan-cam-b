@@ -4,6 +4,7 @@ package yuan.cam.bb.export;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,23 +20,19 @@ import java.util.List;
 public interface SourceApi {
 
     @ApiOperation(value = "新增商品信息", response = String.class)
-    @PostMapping(value = "/insert", produces = "application/json;charset=UTF-8", consumes = "application/json;charset=UTF-8")
+    @PostMapping(value = "/insert", produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
     String insertConfig(@RequestBody @Validated ComputerConfigDTO.InsertConfigDTO reqDTO);
 
     @ApiOperation(value = "删除商品信息", response = String.class)
-    @PostMapping(value = "/delete", produces = "application/json;charset=UTF-8", consumes = "application/json;charset=UTF-8")
+    @PostMapping(value = "/delete", produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
     String deleteConfig(@RequestBody @Validated ComputerConfigDTO.DeleteConfigDTO reqDTO);
 
     @ApiOperation(value = "编辑商品信息", response = String.class)
-    @PostMapping(value = "/edit", produces = "application/json;charset=UTF-8", consumes = "application/json;charset=UTF-8")
+    @PostMapping(value = "/edit", produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
     String editConfig(@RequestBody @Validated ComputerConfigDTO.EditConfigDTO reqDTO);
 
-//    @ApiOperation(value = "查询商品信息", response = ConfigVO.class)
-//    @PostMapping(value = "/query", produces = "application/json;charset=UTF-8", consumes = "application/json;charset=UTF-8")
-//    List<ConfigVO> queryConfig(@RequestBody @Validated ComputerConfigDTO.QueryConfigDTO reqDTO);
-
     @ApiOperation(value = "查询商品信息", response = List.class)
-    @PostMapping(value = "/query", produces = "application/json;charset=UTF-8", consumes = "application/json;charset=UTF-8")
+    @PostMapping(value = "/query", produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
     List<ConfigVO> queryConfig(@RequestBody @Validated ComputerConfigDTO.QueryConfigDTO reqDTO);
 
 }

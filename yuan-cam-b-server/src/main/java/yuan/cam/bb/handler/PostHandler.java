@@ -1,34 +1,28 @@
 package yuan.cam.bb.handler;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.base.Throwables;
 import com.xxl.job.core.biz.model.ReturnT;
 import com.xxl.job.core.handler.IJobHandler;
 import com.xxl.job.core.handler.annotation.JobHandler;
-import org.dozer.DozerBeanMapper;
-import org.dozer.Mapper;
 import org.jsoup.Connection;
 import org.jsoup.helper.HttpConnection;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import yuan.cam.bb.dto.ConfigDTO;
-import yuan.cam.bb.entity.ComputerConfig;
 import yuan.cam.bb.service.ESService;
 import yuan.cam.bb.util.LogUtil;
+import yuan.cam.bb.vo.ComputerConfigVO;
 
 import java.io.Serializable;
 import java.net.URLEncoder;
+import java.util.List;
 import java.util.UUID;
 
 @JobHandler(value = "PostHandler")
 @Component
 public class PostHandler extends IJobHandler implements Serializable{
-
-    private Mapper dozer = new DozerBeanMapper();
 
     @Autowired
     private ESService esService;
@@ -44,12 +38,12 @@ public class PostHandler extends IJobHandler implements Serializable{
         int page = count % size == 0 ? count / size : count / size + 1;
         try{
             for(int i = 1; i < page + 1; i++){
-                JSONArray jsonArray = esService.queryConfig(new JSONObject(), i, size, qid);
-                for(int j = 0; j < jsonArray.size(); j++){
+                List<ComputerConfigVO> list = esService.queryConfig(new JSONObject(), i, size, qid);
+                for(int j = 0; j < list.size(); j++){
 
-                    JSONObject jsonObject = (JSONObject)jsonArray.get(j);
-                    double minPrice = Double.parseDouble(jsonObject.get("price").toString());
-                    String key = jsonObject.get("brand") + " " + jsonObject.get("type") + " " + jsonObject.get("name");
+                    ComputerConfigVO computerConfig = list.get(j);
+                    double minPrice = computerConfig.getPrice();
+                    String key = computerConfig.getBrand() + " " + computerConfig.getType() + " " + computerConfig.getName();
                     String url = jdUrl.replaceAll("\\{\\}", URLEncoder.encode(key, "UTF-8" ));
                     Connection con = new HttpConnection();
                     Connection connection = con.url(url).timeout(timeOut);
@@ -64,8 +58,8 @@ public class PostHandler extends IJobHandler implements Serializable{
                              minPrice = Math.min(minPrice, price);
                         }
                     }
-                    if(minPrice < Double.parseDouble(jsonObject.get("floorPrice").toString())){
-                        esService.updateConfig(jsonObject.get("_id").toString(), minPrice, qid);
+                    if(minPrice < computerConfig.getFloorPrice()){
+                        esService.updateConfig(computerConfig.getEsId().toString(), minPrice, qid);
                     }
 
                 }

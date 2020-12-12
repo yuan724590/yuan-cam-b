@@ -2,12 +2,9 @@ package yuan.cam.bb.service.impl;
 
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.base.Throwables;
-import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
-import org.checkerframework.checker.units.qual.A;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.search.MultiSearchRequest;
 import org.elasticsearch.action.search.MultiSearchResponse;
@@ -20,7 +17,6 @@ import org.elasticsearch.common.unit.TimeValue;
 import org.elasticsearch.common.xcontent.XContentType;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
-import org.elasticsearch.index.query.TermQueryBuilder;
 import org.elasticsearch.index.query.TermsQueryBuilder;
 import org.elasticsearch.index.reindex.BulkByScrollResponse;
 import org.elasticsearch.index.reindex.DeleteByQueryRequest;
@@ -29,14 +25,15 @@ import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
-import redis.clients.jedis.Jedis;
 import yuan.cam.bb.ContentConst;
 import yuan.cam.bb.dto.ConfigDTO;
-import yuan.cam.bb.entity.ComputerConfig;
 import yuan.cam.bb.service.ESService;
 import yuan.cam.bb.util.EsUtil;
 import yuan.cam.bb.util.LogUtil;
+import yuan.cam.bb.vo.ComputerConfigVO;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -47,7 +44,6 @@ import static org.elasticsearch.common.xcontent.XContentFactory.jsonBuilder;
 @Service
 public class ESServiceImpl implements ESService {
 
-//    private Mapper dozer =new DozerBeanMapper();
     @Autowired
     private RedisTemplate redisTemplate;
 
@@ -113,8 +109,7 @@ public class ESServiceImpl implements ESService {
     }
 
     @Override
-    public JSONArray queryConfig(JSONObject jsonObject, Integer page, Integer size, String qid) {
-        JSONArray jsonArray = new JSONArray();
+    public List<ComputerConfigVO> queryConfig(JSONObject jsonObject, Integer page, Integer size, String qid) {
         try{
             LogUtil.debug("开始进行ES查询", qid);
             int from = (page - 1) * size;
@@ -131,35 +126,31 @@ public class ESServiceImpl implements ESService {
                 searchRequest.source(searchSourceBuilder);
                 request.add(searchRequest);
                 MultiSearchResponse searchResponse = EsUtil.getESClient().msearch(request, RequestOptions.DEFAULT);
-                MultiSearchResponse.Item item = searchResponse.getResponses()[0];
-                for(SearchHit hit : item.getResponse().getHits()) {
-                    JSONObject json = new JSONObject();
-                    json.put("_id", hit.getId());
-                    json.put("id", hit.getSourceAsMap().get("id"));
-                    json.put("brand", hit.getSourceAsMap().get("brand"));
-                    json.put("name", hit.getSourceAsMap().get("name"));
-                    json.put("type", hit.getSourceAsMap().get("type"));
-                    json.put("price", hit.getSourceAsMap().get("price"));
-                    json.put("floorPrice", hit.getSourceAsMap().get("floorPrice"));
-                    json.put("createTime", hit.getSourceAsMap().get("createTime"));
-                    json.put("updateTime", hit.getSourceAsMap().get("updateTime"));
-                    jsonArray.add(json);
+                if(searchResponse == null || searchResponse.getResponses() == null || searchResponse.getResponses().length == 0){
+                    return Collections.emptyList();
                 }
-                String value = jsonArray.toJSONString();
-                redisTemplate.opsForValue().set(key, value, 3600, TimeUnit.SECONDS);
-                return jsonArray;
+                MultiSearchResponse.Item item = searchResponse.getResponses()[0];
+                if(item != null && item.getResponse() != null && item.getResponse().getHits() != null){
+                    List<ComputerConfigVO> list = new ArrayList<>();
+                    for(SearchHit hit : item.getResponse().getHits()) {
+                        ComputerConfigVO computerConfig = JSONObject.parseObject(String.valueOf(hit.getSourceAsMap()), ComputerConfigVO.class);
+                        computerConfig.setEsId(Integer.valueOf(hit.getId()));
+                        list.add(computerConfig);
+                    }
+                    redisTemplate.opsForValue().set(key, list, 3600, TimeUnit.SECONDS);
+                    return list;
+                }
             }
-            jsonArray = (JSONArray) JSON.parse(String.valueOf(redisTemplate.opsForValue().get(key)));
+            return (List<ComputerConfigVO>) redisTemplate.opsForValue().get(key);
         }catch (Exception e){
             LogUtil.error("请求es异常:" + Throwables.getStackTraceAsString(e), qid);
-            return null;
         }
-        return jsonArray;
+        return Collections.emptyList();
     }
 
     @Override
     public Integer queryCount(JSONObject jsonObject, String qid) {
-        int count = 0;
+        int count;
         try{
             CountRequest countRequest = new CountRequest();
             countRequest.indices(ContentConst.ES_INDEX);

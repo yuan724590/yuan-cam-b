@@ -1,11 +1,9 @@
 package yuan.cam.bb.service;
 
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import yuan.cam.bb.dto.ConfigDTO;
-import yuan.cam.bb.entity.ComputerConfig;
+import yuan.cam.bb.vo.ComputerConfigVO;
 
-import javax.security.auth.login.Configuration;
 import java.util.List;
 
 public interface ESService {
@@ -15,7 +13,7 @@ public interface ESService {
 
     String deleteConfig(List<Integer> idList, String qid);
 
-    JSONArray queryConfig(JSONObject jsonObject, Integer page, Integer size, String qid);
+    List<ComputerConfigVO> queryConfig(JSONObject jsonObject, Integer page, Integer size, String qid);
 
     Integer queryCount(JSONObject jsonObject, String qid);
 }

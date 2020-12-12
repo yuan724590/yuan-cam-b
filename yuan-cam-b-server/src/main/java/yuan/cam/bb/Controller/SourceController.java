@@ -54,12 +54,6 @@ public class SourceController implements SourceApi {
         return sourceService.editConfig(computerConfig, qid);
     }
 
-//    @Override
-//    public List<ConfigVO> queryConfig(@RequestBody @Validated ComputerConfigDTO.QueryConfigDTO reqDTO) {
-//        String qid = UUID.randomUUID().toString();
-//        return sourceService.queryConfig(reqDTO.getSearch(), reqDTO.getPage(), reqDTO.getSize(), qid);
-//    }
-
     @Override
     public List<ConfigVO> queryConfig(@RequestBody @Validated ComputerConfigDTO.QueryConfigDTO reqDTO) {
         String qid = UUID.randomUUID().toString();
