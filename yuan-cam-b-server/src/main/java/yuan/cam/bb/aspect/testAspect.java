@@ -1,9 +1,11 @@
 package yuan.cam.bb.aspect;
 
-import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.annotation.Before;
-import org.aspectj.lang.annotation.Pointcut;
+import org.aspectj.lang.JoinPoint;
+import org.aspectj.lang.ProceedingJoinPoint;
+import org.aspectj.lang.annotation.*;
 import org.springframework.stereotype.Component;
+import yuan.cam.bb.annotation.TestAnnotation;
+import yuan.cam.bb.vo.ResultVO;
 
 @Aspect
 @Component
@@ -22,10 +24,35 @@ public class testAspect {
      * 入参JoinPoint
      */
     //根据注解进行aop
-    @Before("entryPoint() && args(object)")
-    public void interfaceBefore(Object object){
-        System.out.println("interfaceBefore-----");
+    @Before("entryPoint() && args(object) && @annotation(testAnnotation)")
+    public void interfaceBefore(Object object, TestAnnotation testAnnotation){
+
+        System.out.println("interfaceBefore-----" + testAnnotation.type());
     }
 
     //其余情况同理，可以通过一个注解处理多种情况
+
+    /**
+     * 在切入点之后做的事
+     */
+    @After("entryPoint()")
+    public void interfaceAfter(){
+    }
+
+    /**
+     * 在return之后做的事
+     */
+    @AfterReturning(returning = "result", value = "entryPoint()")
+    public ResultVO doAfterReturning(JoinPoint joinPoint, Object result)  {
+        return null;
+    }
+
+    /**
+     * 更改返回值,不能改返回值类型,会与@AfterReturning注解冲突,不用就注释
+     */
+//    @Around("entryPoint()")
+    public ResultVO interfaceAround(ProceedingJoinPoint point) throws Throwable {
+        Object result = point.proceed();
+        return new ResultVO(0, "", result);
+    }
 }
