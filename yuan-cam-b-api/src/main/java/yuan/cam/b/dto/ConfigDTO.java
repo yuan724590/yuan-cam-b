@@ -17,7 +17,7 @@ public class ConfigDTO {
 
     private String type;
 
-    private String name;
+    private String goodsName;
 
     private Double price;
 

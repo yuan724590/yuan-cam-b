@@ -1,35 +1,27 @@
 package yuan.cam.b.vo;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 @Data
 public class ConfigVO {
 
+    @ApiModelProperty("商品id")
     private Integer id;
 
-    /**
-     * 商品品牌
-     */
+    @ApiModelProperty("商品品牌")
     private String brand;
 
-    /**
-     * 商品类型
-     */
+    @ApiModelProperty("商品类型")
     private String type;
 
-    /**
-     * 商品名
-     */
-    private String name;
+    @ApiModelProperty("商品名")
+    private String goodsName;
 
-    /**
-     * 商品价格
-     */
-    private Double price;
+    @ApiModelProperty("商品价格")
+    private Integer price;
 
-    /**
-     * 底价
-     */
-    private Double floorPrice;
+    @ApiModelProperty("底价")
+    private Integer floorPrice;
 
 }

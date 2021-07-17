@@ -15,7 +15,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 import tk.mybatis.spring.annotation.MapperScan;
 
 @EnableDiscoveryClient
-@MapperScan(value = "yuan.cam.b.**.mapper")
+@MapperScan(value = "yuan.cam.b.mapper")
 @EnableFeignClients("yuan.cam.*")
 @EnableSwagger2
 @EnableApolloConfig

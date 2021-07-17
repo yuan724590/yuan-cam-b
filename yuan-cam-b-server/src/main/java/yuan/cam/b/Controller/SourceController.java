@@ -27,7 +27,7 @@ public class SourceController implements SourceApi {
         computerConfig.setBrand(reqDTO.getBrand());
         computerConfig.setFloorPrice(reqDTO.getFloorPrice());
         computerConfig.setType(reqDTO.getType());
-        computerConfig.setName(reqDTO.getName());
+        computerConfig.setGoodsName(reqDTO.getGoodsName());
         computerConfig.setPrice(reqDTO.getPrice());
         computerConfig.setUpdateTime((int) (System.currentTimeMillis() / 1000));
         computerConfig.setCreateTime((int) (System.currentTimeMillis() / 1000));
@@ -48,15 +48,19 @@ public class SourceController implements SourceApi {
         computerConfig.setBrand(reqDTO.getBrand());
         computerConfig.setFloorPrice(reqDTO.getFloorPrice());
         computerConfig.setType(reqDTO.getType());
-        computerConfig.setName(reqDTO.getName());
+        computerConfig.setGoodsName(reqDTO.getGoodsName());
         computerConfig.setPrice(reqDTO.getPrice());
         return sourceService.editConfig(computerConfig, qid);
     }
 
     @Override
-    public List<ConfigVO> queryConfig(@RequestBody @Validated ComputerConfigDTO.QueryConfigDTO reqDTO) {
+    public List<ConfigVO> queryDetail(@RequestBody @Validated ComputerConfigDTO.QueryDetailDTO reqDTO) {
         String qid = UUID.randomUUID().toString();
-        return sourceService.queryConfig(reqDTO.getSearch(), reqDTO.getPage(), reqDTO.getSize(), qid);
+        return sourceService.queryDetail(reqDTO.getSearch(), reqDTO.getPage(), reqDTO.getSize(), qid);
     }
 
+    @Override
+    public List<ConfigVO> queryByName(@RequestBody @Validated ComputerConfigDTO.QueryByNameDTO reqDTO){
+        return sourceService.queryByName(reqDTO.getGoodsName());
+    }
 }

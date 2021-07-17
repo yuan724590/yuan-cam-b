@@ -9,7 +9,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Data
-@Table(name = ContentConst.COMPUTER_CONFIG)
+@Table(name = "computer_config")
 public class ComputerConfig {
     /**
      * 主键id
@@ -33,20 +33,20 @@ public class ComputerConfig {
     /**
      * 商品名称
      */
-    @Column(name = "name")
-    private String name;
+    @Column(name = "goods_name")
+    private String goodsName;
 
     /**
      * 商品价格
      */
     @Column(name = "price")
-    private Double price;
+    private Integer price;
 
     /**
      * 底价
      */
     @Column(name = "floor_Price")
-    private Double floorPrice;
+    private Integer floorPrice;
 
     /**
      * 创建时间

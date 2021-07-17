@@ -26,7 +26,7 @@ public class ComputerConfigDTO {
 
         @ApiModelProperty(value = "商品底价", required = true)
         @NotNull
-        private double floorPrice;
+        private Integer floorPrice;
 
         @ApiModelProperty(value = "商品类型", required = true)
         @NotNull
@@ -34,11 +34,11 @@ public class ComputerConfigDTO {
 
         @ApiModelProperty(value = "商品名", required = true)
         @NotNull
-        private String name;
+        private String goodsName;
 
         @ApiModelProperty(value = "商品价格", required = true)
         @NotNull
-        private Double price;
+        private Integer price;
     }
 
     @Data
@@ -67,7 +67,7 @@ public class ComputerConfigDTO {
 
         @ApiModelProperty(value = "商品底价", required = true)
         @NotNull
-        private double floorPrice;
+        private Integer floorPrice;
 
         @ApiModelProperty(value = "商品类型", required = true)
         @NotNull
@@ -75,19 +75,19 @@ public class ComputerConfigDTO {
 
         @ApiModelProperty(value = "商品名", required = true)
         @NotNull
-        private String name;
+        private String goodsName;
 
         @ApiModelProperty(value = "商品价格", required = true)
         @NotNull
-        private Double price;
+        private Integer price;
     }
 
     @Data
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    @ApiModel("ComputerConfigDTO.QueryConfigDTO")
-    public static class QueryConfigDTO {
+    @ApiModel("ComputerConfigDTO.QueryDetailDTO")
+    public static class QueryDetailDTO {
 
         @ApiModelProperty(value = "查询条件", required = true)
         private Map<String, String> search;
@@ -101,5 +101,16 @@ public class ComputerConfigDTO {
         @Min(1)
         @ApiModelProperty(value = "页面大小", required = true)
         private Integer size;
+    }
+
+    @Data
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @ApiModel("ComputerConfigDTO.QueryByNameDTO")
+    public static class QueryByNameDTO {
+
+        @ApiModelProperty(value = "商品名", required = true)
+        private String goodsName;
     }
 }

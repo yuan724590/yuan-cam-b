@@ -31,8 +31,11 @@ public interface SourceApi {
     @PostMapping(value = "/edit", produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
     String editConfig(@RequestBody @Validated ComputerConfigDTO.EditConfigDTO reqDTO);
 
-    @ApiOperation(value = "查询商品信息", response = List.class)
+    @ApiOperation(value = "通用查询商品信息", response = List.class)
     @PostMapping(value = "/query", produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    List<ConfigVO> queryConfig(@RequestBody @Validated ComputerConfigDTO.QueryConfigDTO reqDTO);
+    List<ConfigVO> queryDetail(@RequestBody @Validated ComputerConfigDTO.QueryDetailDTO reqDTO);
 
+    @ApiOperation(value = "根据商品名称查询商品信息", response = List.class)
+    @PostMapping(value = "/queryByName", produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    List<ConfigVO> queryByName(@RequestBody @Validated ComputerConfigDTO.QueryByNameDTO reqDTO);
 }

@@ -43,7 +43,7 @@ public class PostHandler extends IJobHandler implements Serializable {
 
                     ComputerConfigVO computerConfig = list.get(j);
                     double minPrice = computerConfig.getPrice();
-                    String key = computerConfig.getBrand() + " " + computerConfig.getType() + " " + computerConfig.getName();
+                    String key = computerConfig.getBrand() + " " + computerConfig.getType() + " " + computerConfig.getGoodsName();
                     String url = jdUrl.replaceAll("\\{\\}", URLEncoder.encode(key, "UTF-8"));
                     Connection con = new HttpConnection();
                     Connection connection = con.url(url).timeout(timeOut);

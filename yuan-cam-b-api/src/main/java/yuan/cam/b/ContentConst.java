@@ -3,8 +3,8 @@ package yuan.cam.b;
 import com.alibaba.fastjson.JSONObject;
 
 public interface ContentConst {
-//    String SERVICE_NAME = "yuan-cam-bb";
-    String SERVICE_NAME = "YUAN-CAM-BB";
+//    String SERVICE_NAME = "yuan-cam-b";
+    String SERVICE_NAME = "YUAN-CAM-B";
 
     String ES_INDEX = "computer_config";
 
