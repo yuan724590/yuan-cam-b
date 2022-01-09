@@ -13,7 +13,7 @@ import javax.annotation.Resource;
 import java.util.List;
 import java.util.UUID;
 
-@RequestMapping("/source")
+@RequestMapping
 @RestController
 public class ESController implements ESApi {
     @Resource

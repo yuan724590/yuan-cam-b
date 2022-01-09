@@ -12,7 +12,7 @@ import yuan.cam.b.export.GetHello;
 import yuan.cam.b.service.HelloService;
 import yuan.cam.b.vo.ResultVO;
 
-@RequestMapping(value = "/hello")
+@RequestMapping
 @RestController
 public class HelloController implements GetHello {
 

@@ -1,8 +1,8 @@
 package yuan.cam.b.common;
 
 
-public interface Constants {
+public class Constants {
 
 
-    String SERVICE_NAME = "YUAN-CAM-B";
+    public final static String SERVICE_NAME = "YUAN-CAM-B";
 }

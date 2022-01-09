@@ -55,12 +55,16 @@ public class HelloServiceImpl implements HelloService {
 
     @Override
     public String sayHelloAgain() {
+        long t1 = System.currentTimeMillis();
         String qid = UUID.randomUUID().toString();
         System.out.println(111);
-        LogUtil.error("打印error日志", qid);
-        LogUtil.warn("打印warn日志", qid);
-        LogUtil.info("打印info日志", qid);
-        LogUtil.debug("打印debug日志", qid);
+        long t2 = System.currentTimeMillis();
+
+//        LogUtil.error("打印error日志", qid);
+//        LogUtil.warn("打印warn日志", qid);
+//        LogUtil.info("打印info日志", qid);
+//        LogUtil.debug("打印debug日志", qid);
+        long t3 = System.currentTimeMillis();
         return "ok";
     }
 
