@@ -25,7 +25,7 @@ import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
-import yuan.cam.b.ContentConst;
+import yuan.cam.b.commons.Constants;
 import yuan.cam.b.dto.ConfigDTO;
 import yuan.cam.b.service.ESService;
 import yuan.cam.b.util.EsUtil;
@@ -63,7 +63,7 @@ public class ESServiceImpl implements ESService {
             }
             jsonObject.put("createTime", (int) (System.currentTimeMillis() / 1000));
             jsonObject.put("updateTime", (int) (System.currentTimeMillis() / 1000));
-            IndexRequest indexRequest = new IndexRequest(ContentConst.ES_INDEX);
+            IndexRequest indexRequest = new IndexRequest(Constants.ES_INDEX);
             indexRequest.source(jsonObject, XContentType.JSON);
             EsUtil.getESClient().index(indexRequest, RequestOptions.DEFAULT);
         } catch (Exception e) {
@@ -76,7 +76,7 @@ public class ESServiceImpl implements ESService {
     @Override
     public String updateConfig(String _id, double floorPrice, String qid) {
         try {
-            UpdateRequest updateRequest = new UpdateRequest(ContentConst.ES_INDEX, _id);
+            UpdateRequest updateRequest = new UpdateRequest(Constants.ES_INDEX, _id);
             updateRequest.doc(jsonBuilder().startObject().field("floorPrice", floorPrice)
                     .field("updateTime", System.currentTimeMillis() / 1000).endObject());
             EsUtil.getESClient().update(updateRequest, RequestOptions.DEFAULT);
@@ -91,7 +91,7 @@ public class ESServiceImpl implements ESService {
     public String deleteConfig(List<Integer> idList, String qid) {
         try {
             LogUtil.debug("开始进行ES删除", qid);
-            DeleteByQueryRequest request = new DeleteByQueryRequest(ContentConst.ES_INDEX);
+            DeleteByQueryRequest request = new DeleteByQueryRequest(Constants.ES_INDEX);
             request.setConflicts("proceed");
             request.setQuery(new BoolQueryBuilder().filter(new TermsQueryBuilder("id", idList)));
             request.setTimeout(TimeValue.timeValueMinutes(2));
@@ -116,7 +116,7 @@ public class ESServiceImpl implements ESService {
             String key = jsonObject.toString() + page + size;
             if (redisTemplate.opsForValue().get(key) == null) {
                 MultiSearchRequest request = new MultiSearchRequest();
-                SearchRequest searchRequest = new SearchRequest(ContentConst.ES_INDEX);
+                SearchRequest searchRequest = new SearchRequest(Constants.ES_INDEX);
                 SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
                 if (jsonObject.size() > 0) {
                     searchSourceBuilder.query(QueryBuilders.matchQuery(jsonObject.keySet().iterator().next(), jsonObject.get(jsonObject.keySet().iterator().next())));
@@ -153,7 +153,7 @@ public class ESServiceImpl implements ESService {
         int count;
         try {
             CountRequest countRequest = new CountRequest();
-            countRequest.indices(ContentConst.ES_INDEX);
+            countRequest.indices(Constants.ES_INDEX);
             if (jsonObject.size() > 0) {
                 SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
                 searchSourceBuilder.query(QueryBuilders.matchQuery(jsonObject.keySet().iterator().next(), jsonObject.get(jsonObject.keySet().iterator().next())));

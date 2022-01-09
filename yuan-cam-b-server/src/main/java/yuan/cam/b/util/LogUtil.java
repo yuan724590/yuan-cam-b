@@ -21,8 +21,8 @@ import javax.annotation.Resource;
 import java.util.Set;
 import java.util.UUID;
 
-import static yuan.cam.b.ContentConst.ES_LOG;
-import static yuan.cam.b.ContentConst.SERVICE_NAME;
+import static yuan.cam.b.commons.Constants.ES_LOG;
+import static yuan.cam.b.commons.Constants.SERVICE_NAME;
 
 @Slf4j
 @Configuration

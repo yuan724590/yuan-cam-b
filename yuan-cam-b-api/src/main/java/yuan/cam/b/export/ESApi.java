@@ -9,7 +9,7 @@ import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import yuan.cam.b.ContentConst;
+import yuan.cam.b.common.Constants;
 import yuan.cam.b.dto.ESDTO;
 import yuan.cam.b.vo.ComputerConfigVO;
 
@@ -17,7 +17,7 @@ import java.util.List;
 
 
 @Api(value = "ES变更")
-@FeignClient(value = ContentConst.SERVICE_NAME)
+@FeignClient(value = Constants.SERVICE_NAME)
 public interface ESApi {
 
     @ApiOperation(value = "新增商品信息", response = String.class)

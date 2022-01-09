@@ -5,12 +5,12 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import yuan.cam.b.ContentConst;
+import yuan.cam.b.common.Constants;
 import yuan.cam.b.dto.HelloDTO;
 import yuan.cam.b.vo.ResultVO;
 
 @Api(value = "测试")
-@FeignClient(value = ContentConst.SERVICE_NAME)
+@FeignClient(value = Constants.SERVICE_NAME)
 public interface GetHello {
 
     @PostMapping("/redis")

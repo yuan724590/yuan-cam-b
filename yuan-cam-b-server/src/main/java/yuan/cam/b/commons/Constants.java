@@ -1,9 +1,10 @@
-package yuan.cam.b;
+package yuan.cam.b.commons;
 
 import com.alibaba.fastjson.JSONObject;
 
-public interface ContentConst {
-//    String SERVICE_NAME = "yuan-cam-b";
+public interface Constants {
+    String SERVICE_NAME_LOWERCASE = "yuan-cam-b";
+
     String SERVICE_NAME = "YUAN-CAM-B";
 
     String ES_INDEX = "computer_config";

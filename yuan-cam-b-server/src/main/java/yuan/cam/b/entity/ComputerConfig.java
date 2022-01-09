@@ -1,7 +1,6 @@
 package yuan.cam.b.entity;
 
 import lombok.Data;
-import yuan.cam.b.ContentConst;
 
 import javax.persistence.Column;
 import javax.persistence.GeneratedValue;

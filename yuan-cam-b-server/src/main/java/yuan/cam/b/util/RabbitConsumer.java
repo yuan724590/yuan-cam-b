@@ -1,6 +1,5 @@
 package yuan.cam.b.util;
 
-import com.rabbitmq.client.*;
 import org.springframework.amqp.core.ExchangeTypes;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.annotation.Exchange;
@@ -8,12 +7,6 @@ import org.springframework.amqp.rabbit.annotation.Queue;
 import org.springframework.amqp.rabbit.annotation.QueueBinding;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
-import yuan.cam.b.ContentConst;
-import com.rabbitmq.client.Channel;
-import com.rabbitmq.client.Connection;
-import com.rabbitmq.client.ConnectionFactory;
-
-import java.io.IOException;
 
 @Component
 public class RabbitConsumer {

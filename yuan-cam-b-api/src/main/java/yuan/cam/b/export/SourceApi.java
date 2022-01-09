@@ -8,7 +8,7 @@ import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import yuan.cam.b.ContentConst;
+import yuan.cam.b.common.Constants;
 import yuan.cam.b.dto.ComputerConfigDTO;
 import yuan.cam.b.vo.ConfigVO;
 
@@ -16,7 +16,7 @@ import java.util.List;
 
 
 @Api(value = "数据层变更")
-@FeignClient(value = ContentConst.SERVICE_NAME)
+@FeignClient(value = Constants.SERVICE_NAME)
 public interface SourceApi {
 
     @ApiOperation(value = "新增商品信息", response = String.class)

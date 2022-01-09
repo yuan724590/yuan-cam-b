@@ -1,4 +1,4 @@
-package yuan.cam.b.Controller;
+package yuan.cam.b.controller;
 
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestBody;

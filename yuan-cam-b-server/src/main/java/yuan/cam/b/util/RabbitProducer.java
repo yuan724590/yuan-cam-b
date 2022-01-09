@@ -1,14 +1,10 @@
 package yuan.cam.b.util;
 
 import com.rabbitmq.client.*;
-import org.springframework.amqp.core.Message;
-import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Component;
-import yuan.cam.b.ContentConst;
 
 import javax.annotation.Resource;
-import java.io.IOException;
 
 @Component
 public class RabbitProducer {

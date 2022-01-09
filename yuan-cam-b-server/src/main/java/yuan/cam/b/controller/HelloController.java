@@ -1,4 +1,4 @@
-package yuan.cam.b.Controller;
+package yuan.cam.b.controller;
 
 
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
