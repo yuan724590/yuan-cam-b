@@ -52,13 +52,21 @@
         <apollo.version>1.4.0</apollo.version>
         <zipkin.brave.version>5.9.1</zipkin.brave.version>
         <zipkin.okhttp3.version>2.12.0</zipkin.okhttp3.version>
+        <commons.collections.version>3.2.2</commons.collections.version>
     </properties>
 
     <dependencies>
         <dependency>
+            <groupId>commons-collections</groupId>
+            <artifactId>commons-collections</artifactId>
+            <version>${commons.collections.version}</version>
+        </dependency>
+
+        <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-netflix-hystrix</artifactId>
         </dependency>
+
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-netflix-hystrix-dashboard</artifactId>
@@ -163,6 +171,12 @@
         <dependency>
             <groupId>org.elasticsearch.client</groupId>
             <artifactId>transport</artifactId>
+            <version>${es.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.elasticsearch.client</groupId>
+            <artifactId>elasticsearch-rest-client-sniffer</artifactId>
             <version>${es.version}</version>
         </dependency>
 

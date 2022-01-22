@@ -5,166 +5,196 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.base.Throwables;
 import lombok.extern.slf4j.Slf4j;
-import org.elasticsearch.action.index.IndexRequest;
-import org.elasticsearch.action.search.MultiSearchRequest;
-import org.elasticsearch.action.search.MultiSearchResponse;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.action.search.SearchRequest;
-import org.elasticsearch.action.update.UpdateRequest;
+import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.action.search.SearchScrollRequest;
 import org.elasticsearch.client.RequestOptions;
-import org.elasticsearch.client.core.CountRequest;
-import org.elasticsearch.client.core.CountResponse;
+import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.common.unit.TimeValue;
-import org.elasticsearch.common.xcontent.XContentType;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
-import org.elasticsearch.index.query.TermsQueryBuilder;
-import org.elasticsearch.index.reindex.BulkByScrollResponse;
-import org.elasticsearch.index.reindex.DeleteByQueryRequest;
+import org.elasticsearch.index.reindex.*;
+import org.elasticsearch.script.Script;
+import org.elasticsearch.script.ScriptType;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import yuan.cam.b.commons.Constants;
-import yuan.cam.b.dto.ConfigDTO;
+import yuan.cam.b.commons.EsCommonService;
+import yuan.cam.b.dto.EsDTO;
+import yuan.cam.b.dto.GoodsInfoDTO;
+import yuan.cam.b.exception.BusinessException;
+import yuan.cam.b.exception.GoodsExceptionEnum;
 import yuan.cam.b.service.ESService;
-import yuan.cam.b.util.EsUtil;
-import yuan.cam.b.util.LogUtil;
 import yuan.cam.b.vo.ComputerConfigVO;
+import yuan.cam.b.vo.Page;
 
+import javax.annotation.Resource;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-
-import static org.elasticsearch.common.xcontent.XContentFactory.jsonBuilder;
 
 
 @Slf4j
 @Service
 public class ESServiceImpl implements ESService {
 
-    @Autowired
+    @Resource
+    private EsCommonService esCommonService;
+
+    @Resource
     private RedisTemplate redisTemplate;
+    
+    @Resource
+    private RestHighLevelClient restHighLevelClient;
 
     @Override
-    public String insertConfig(ConfigDTO configDTO, String qid) {
-        if (configDTO == null) {
-            return "false,入参为空";
-        }
-        LogUtil.info("开始进行ES新增", qid);
+    public String insertGoods(GoodsInfoDTO dto) {
         try {
-            JSONObject jsonObject = JSON.parseObject(JSON.toJSONString(configDTO));
-            JSONObject countJson = new JSONObject();
-            countJson.put("id", jsonObject.get("id"));
-            int count = queryCount(countJson, qid);
-            if (count > 0) {
-                return "false,es中已存在";
-            }
-            jsonObject.put("createTime", (int) (System.currentTimeMillis() / 1000));
-            jsonObject.put("updateTime", (int) (System.currentTimeMillis() / 1000));
-            IndexRequest indexRequest = new IndexRequest(Constants.ES_INDEX);
-            indexRequest.source(jsonObject, XContentType.JSON);
-            EsUtil.getESClient().index(indexRequest, RequestOptions.DEFAULT);
+            dto.setCreateTime(LocalDateTime.now().getSecond());
+            dto.setUpdateTime(LocalDateTime.now().getSecond());
+            //新增数据
+            esCommonService.insert(Constants.COMPUTER_CONFIG_INDEX, dto);
         } catch (Exception e) {
-            LogUtil.error("请求es异常:" + Throwables.getStackTraceAsString(e), qid);
-            return "false,请求es异常";
+            log.error("请求es异常:{}", Throwables.getStackTraceAsString(e));
+            throw new BusinessException(GoodsExceptionEnum.GOODS_ALREADY_EXISTS);
         }
-        return "true";
+        return "添加成功";
     }
 
     @Override
-    public String updateConfig(String _id, double floorPrice, String qid) {
-        try {
-            UpdateRequest updateRequest = new UpdateRequest(Constants.ES_INDEX, _id);
-            updateRequest.doc(jsonBuilder().startObject().field("floorPrice", floorPrice)
-                    .field("updateTime", System.currentTimeMillis() / 1000).endObject());
-            EsUtil.getESClient().update(updateRequest, RequestOptions.DEFAULT);
-        } catch (Exception e) {
-            LogUtil.error("请求es异常:" + Throwables.getStackTraceAsString(e), qid);
-            return "false,请求es异常";
+    public String deleteGoods(List<Integer> idList) {
+        if(CollectionUtils.isEmpty(idList)){
+            return "更新成功";
         }
-        return "true";
+        try {
+            UpdateByQueryRequest request = new UpdateByQueryRequest();
+            request.setQuery(QueryBuilders.termsQuery(Constants._ID, idList));
+            request.setBatchSize(idList.size());
+            request.setTimeout(TimeValue.timeValueSeconds(2));
+            request.indices(Constants.COMPUTER_CONFIG_INDEX);
+            request.setScript(new Script(ScriptType.INLINE, "painless", "ctx._source['deleted'] = 1", Collections.emptyMap()));
+            restHighLevelClient.updateByQuery(request, RequestOptions.DEFAULT);
+        } catch (Exception e) {
+            log.error("请求es异常:{}", Throwables.getStackTraceAsString(e));
+        }
+        return "更新成功";
     }
 
     @Override
-    public String deleteConfig(List<Integer> idList, String qid) {
+    public Page<List<ComputerConfigVO>> queryGoods(EsDTO.ESQueryGoodsDTO dto) {
         try {
-            LogUtil.debug("开始进行ES删除", qid);
-            DeleteByQueryRequest request = new DeleteByQueryRequest(Constants.ES_INDEX);
-            request.setConflicts("proceed");
-            request.setQuery(new BoolQueryBuilder().filter(new TermsQueryBuilder("id", idList)));
-            request.setTimeout(TimeValue.timeValueMinutes(2));
-            request.setScroll(TimeValue.timeValueMinutes(10));
-            request.setRefresh(true);
-            BulkByScrollResponse bulkResponse = EsUtil.getESClient().deleteByQuery(request, RequestOptions.DEFAULT);
-            if (bulkResponse.getStatus().getTotal() != idList.size()) {
-                return "false,es删除数据异常";
-            }
-        } catch (Exception e) {
-            LogUtil.error("请求es异常:" + Throwables.getStackTraceAsString(e), qid);
-            return "false,请求es删除数据异常";
-        }
-        return "true";
-    }
-
-    @Override
-    public List<ComputerConfigVO> queryConfig(JSONObject jsonObject, Integer page, Integer size, String qid) {
-        try {
-            LogUtil.debug("开始进行ES查询", qid);
-            int from = (page - 1) * size;
-            String key = jsonObject.toString() + page + size;
+            String key = JSON.toJSONString(dto) + ":" + dto.getPage() + ":" + dto.getSize();
             if (redisTemplate.opsForValue().get(key) == null) {
-                MultiSearchRequest request = new MultiSearchRequest();
-                SearchRequest searchRequest = new SearchRequest(Constants.ES_INDEX);
+                SearchRequest searchRequest = new SearchRequest(Constants.COMPUTER_CONFIG_INDEX);
                 SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
-                if (jsonObject.size() > 0) {
-                    searchSourceBuilder.query(QueryBuilders.matchQuery(jsonObject.keySet().iterator().next(), jsonObject.get(jsonObject.keySet().iterator().next())));
-                }
-                searchSourceBuilder.from(from);
-                searchSourceBuilder.size(size);
+                //组装查询es的条件
+                searchSourceBuilder.query(queryGoodsByEs(dto));
+                searchSourceBuilder.from((dto.getPage() - 1) * dto.getSize());
+                searchSourceBuilder.size(dto.getSize());
                 searchRequest.source(searchSourceBuilder);
-                request.add(searchRequest);
-                MultiSearchResponse searchResponse = EsUtil.getESClient().msearch(request, RequestOptions.DEFAULT);
-                if (searchResponse == null || searchResponse.getResponses() == null || searchResponse.getResponses().length == 0) {
-                    return Collections.emptyList();
-                }
-                MultiSearchResponse.Item item = searchResponse.getResponses()[0];
-                if (item != null && item.getResponse() != null && item.getResponse().getHits() != null) {
-                    List<ComputerConfigVO> list = new ArrayList<>();
-                    for (SearchHit hit : item.getResponse().getHits()) {
-                        ComputerConfigVO computerConfig = JSONObject.parseObject(String.valueOf(hit.getSourceAsMap()), ComputerConfigVO.class);
-                        computerConfig.setEsId(Integer.valueOf(hit.getId()));
-                        list.add(computerConfig);
-                    }
-                    redisTemplate.opsForValue().set(key, list, 3600, TimeUnit.SECONDS);
-                    return list;
-                }
+                SearchResponse searchResponse = restHighLevelClient.search(searchRequest, RequestOptions.DEFAULT);
+                //封装es的请求结果
+                Page<List<ComputerConfigVO>> page = getListByResponse(searchResponse);
+                redisTemplate.opsForValue().set(key, page, 1, TimeUnit.HOURS);
+                return page;
             }
-            return (List<ComputerConfigVO>) redisTemplate.opsForValue().get(key);
         } catch (Exception e) {
-            LogUtil.error("请求es异常:" + Throwables.getStackTraceAsString(e), qid);
+            log.error("请求es异常, 入参:{}, e:{}", JSON.toJSONString(dto), Throwables.getStackTraceAsString(e));
         }
-        return Collections.emptyList();
+        return new Page<>(0, Collections.emptyList());
+    }
+
+    /**
+     * 封装es的请求结果
+     */
+    private Page<List<ComputerConfigVO>> getListByResponse(SearchResponse searchResponse){
+        if (searchResponse == null) {
+            return new Page<>(0, Collections.emptyList());
+        }
+        SearchHit[] searchHits = searchResponse.getHits().getHits();
+        List<ComputerConfigVO> list = new ArrayList<>(searchHits.length);
+        for (SearchHit hit : searchHits) {
+            list.add(JSONObject.parseObject(JSONObject.toJSONString(hit.getSourceAsMap()), ComputerConfigVO.class));
+        }
+        return new Page<>((int) searchResponse.getHits().getTotalHits().value, list);
+    }
+
+    /**
+     * 组装查询es的条件
+     */
+    private BoolQueryBuilder queryGoodsByEs(EsDTO.ESQueryGoodsDTO dto){
+        BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery();
+        if(StringUtils.isNotEmpty(dto.getGoodsName())){
+            boolQueryBuilder.must(QueryBuilders.matchQuery(Constants.GOODS_NAME, dto.getGoodsName()));
+        }
+        if(CollectionUtils.isNotEmpty(dto.getIdList())){
+            boolQueryBuilder.must(QueryBuilders.termsQuery(Constants._ID, dto.getIdList()));
+        }
+        return boolQueryBuilder;
     }
 
     @Override
-    public Integer queryCount(JSONObject jsonObject, String qid) {
-        int count;
-        try {
-            CountRequest countRequest = new CountRequest();
-            countRequest.indices(Constants.ES_INDEX);
-            if (jsonObject.size() > 0) {
-                SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
-                searchSourceBuilder.query(QueryBuilders.matchQuery(jsonObject.keySet().iterator().next(), jsonObject.get(jsonObject.keySet().iterator().next())));
-                countRequest.source(searchSourceBuilder);
+    public List<ComputerConfigVO> queryByScroll(){
+        List<ComputerConfigVO> list = new ArrayList<>();
+        //第一次通过游标进行查询
+        String scrollId = firstQueryEsByScroll(list, 2);
+        for(;;){
+            //后续-通过游标进行查询
+            scrollId = queryEsByScroll(list, scrollId);
+            if(StringUtils.isEmpty(scrollId)){
+                break;
             }
-            CountResponse countResponse = EsUtil.getESClient().count(countRequest, RequestOptions.DEFAULT);
-            count = (int) countResponse.getCount();
-        } catch (Exception e) {
-            LogUtil.error("查询总数请求es异常:" + Throwables.getStackTraceAsString(e), qid);
-            return 0;
         }
-        return count;
+        return list;
+    }
+
+    @Override
+    public String queryEsByScroll(List<ComputerConfigVO> list, String scrollId){
+        try {
+            //通过设置所需的scrollId来创建搜索scroll请求
+            SearchScrollRequest scrollRequest = new SearchScrollRequest(scrollId);
+            scrollRequest.scroll(TimeValue.timeValueSeconds(5));
+            SearchResponse searchResponse = restHighLevelClient.scroll(scrollRequest, RequestOptions.DEFAULT);
+            //封装es的请求结果
+            List<ComputerConfigVO> configList = getListByResponse(searchResponse).getResult();
+            if(CollectionUtils.isNotEmpty(configList)){
+                list.addAll(configList);
+                return searchResponse.getScrollId();
+            }
+        } catch (Exception e) {
+            log.error("queryByScroll-请求通过游标查询es失败, e:{}", Throwables.getStackTraceAsString(e));
+        }
+        return "";
+    }
+
+    @Override
+    public String firstQueryEsByScroll(List<ComputerConfigVO> list, int size){
+        try{
+            SearchRequest searchRequest = new SearchRequest(Constants.COMPUTER_CONFIG_INDEX);
+            SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
+            searchSourceBuilder.size(size);
+            searchRequest.source(searchSourceBuilder);
+            searchRequest.scroll(TimeValue.timeValueSeconds(5));
+            SearchResponse searchResponse = restHighLevelClient.search(searchRequest, RequestOptions.DEFAULT);
+            //封装es的请求结果
+            list.addAll(getListByResponse(searchResponse).getResult());
+            //读取返回的scrollId，在下次搜索scroll调用中将需要它
+            return searchResponse.getScrollId();
+        }catch (Exception e){
+            log.error("firstQueryEsByScroll-请求es异常, e:{}", Throwables.getStackTraceAsString(e));
+        }
+        return "";
+    }
+
+    @Override
+    public Boolean queryIsExistById(Integer id) {
+        //通过id查询是否存在
+        return esCommonService.queryIsExistById(Constants.COMPUTER_CONFIG_INDEX, id);
     }
 }

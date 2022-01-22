@@ -1,6 +1,5 @@
 package yuan.cam.b.dto;
 
-import com.alibaba.fastjson.JSONObject;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
@@ -13,38 +12,32 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
-public class ESDTO {
-    @Data
-    @Builder
-    @NoArgsConstructor
-    @AllArgsConstructor
-    @ApiModel("ComputerConfigDTO.ESInsertConfigDTO")
-    public static class ESInsertConfigDTO {
-        @ApiModelProperty(value = "新增对象", required = true)
-        private ConfigDTO configDTO;
-    }
+public class EsDTO {
 
     @Data
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    @ApiModel("ComputerConfigDTO.ESDeleteConfigDTO")
-    public static class ESDeleteConfigDTO {
+    @ApiModel("ComputerConfigDTO.ESDeleteGoodsDTO")
+    public static class ESDeleteGoodsDTO {
+
         @ApiModelProperty(value = "要删除的id列表", required = true)
         @NotEmpty
-        List<Integer> idList;
+        private List<Integer> idList;
     }
 
     @Data
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    @ApiModel("ComputerConfigDTO.ESQueryConfigDTO")
-    public static class ESQueryConfigDTO {
+    @ApiModel("ComputerConfigDTO.ESQueryGoodsDTO")
+    public static class ESQueryGoodsDTO {
 
-        @ApiModelProperty(value = "查询条件", required = true)
-        @NotNull
-        private JSONObject jsonObject;
+        @ApiModelProperty(value = "主键id列表", required = true)
+        private List<Integer> idList;
+
+        @ApiModelProperty(value = "商品名字", required = true)
+        private String goodsName;
 
         @NotNull
         @Min(1)
@@ -55,5 +48,16 @@ public class ESDTO {
         @Min(1)
         @ApiModelProperty(value = "页面大小", required = true)
         private Integer size;
+    }
+
+    @Data
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @ApiModel("ComputerConfigDTO.QueryIsExistByIdDTO")
+    public static class QueryIsExistByIdDTO {
+
+        @ApiModelProperty(value = "商品ID", required = true)
+        private Integer id;
     }
 }

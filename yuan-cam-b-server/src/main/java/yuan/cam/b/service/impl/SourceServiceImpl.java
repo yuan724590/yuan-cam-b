@@ -29,14 +29,14 @@ public class SourceServiceImpl implements SourceService {
         if (computerConfig == null) {
             return "false";
         }
-        LogUtil.debug("开始进行新增", qid);
+        log.debug("开始进行新增");
         computerConfigMapper.insert(computerConfig);
         return "true";
     }
 
     @Override
     public String deleteConfig(List<Integer> idList, String qid) {
-        LogUtil.debug("开始进行删除", qid);
+        log.debug("开始进行删除");
         Example example = new Example(ComputerConfig.class);
         example.createCriteria().andIn("id", idList);
         computerConfigMapper.deleteByExample(example);
@@ -45,14 +45,14 @@ public class SourceServiceImpl implements SourceService {
 
     @Override
     public String editConfig(ComputerConfig computerConfig, String qid) {
-        LogUtil.debug("开始进行编辑", qid);
+        log.debug("开始进行编辑");
         computerConfigMapper.updateByPrimaryKeySelective(computerConfig);
         return "true";
     }
 
     @Override
     public List<ConfigVO> queryDetail(Map<String, String> search, Integer page, Integer size, String qid) {
-        LogUtil.debug("开始进行查询", qid);
+        log.debug("开始进行查询");
         Example example = new Example(ComputerConfig.class);
         if (search != null && search.size() > 0) {
             Example.Criteria criteria = example.createCriteria();

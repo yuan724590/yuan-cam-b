@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 import yuan.cam.b.dto.HelloDTO;
 import yuan.cam.b.export.GetHello;
 import yuan.cam.b.service.HelloService;
+import yuan.cam.b.util.ResultUtils;
 import yuan.cam.b.vo.ResultVO;
 
 @RequestMapping
@@ -38,13 +39,13 @@ public class HelloController implements GetHello {
     @Override
     public ResultVO helloA(@RequestBody @Validated HelloDTO.HelloADTO reqDTO) {
         String result = helloService.helloA(reqDTO.getPage());
-        return new ResultVO(result);
+        return ResultUtils.data(result);
     }
 
     @Override
     public ResultVO helloB(@RequestBody @Validated HelloDTO.HelloBDTO reqDTO) {
         String result = helloService.rest(reqDTO.getStr());
-        return new ResultVO(result);
+        return ResultUtils.data(result);
     }
 
     @Override

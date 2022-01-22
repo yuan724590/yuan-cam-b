@@ -3,14 +3,13 @@ package yuan.cam.b.vo;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import java.math.BigDecimal;
+
 @Data
 public class ComputerConfigVO {
 
     @ApiModelProperty("商品id")
     private Integer id;
-
-    @ApiModelProperty("主键id")
-    private Integer esId;
 
     @ApiModelProperty("商品名称")
     private String brand;
@@ -26,6 +25,9 @@ public class ComputerConfigVO {
 
     @ApiModelProperty("底价")
     private Double floorPrice;
+
+    @ApiModelProperty(value = "商品史低价格")
+    private BigDecimal historicalLowestPrice;
 
     @ApiModelProperty("创建时间")
     private Integer createTime;

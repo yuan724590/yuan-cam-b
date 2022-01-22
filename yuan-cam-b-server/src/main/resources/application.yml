@@ -22,19 +22,19 @@ spring:
             - Path=/baidu/**
           filters:
             - StripPrefix=1
-  datasource:
-    username: root
-    password: root
-    url: jdbc:mysql://127.0.0.1:3306/computer?serverTimezone=GMT%2B8&useUnicode=true&characterEncoding=utf-8&verifyServerCertificate=false&useSSL=false
-    driver-class-name: com.mysql.cj.jdbc.Driver
-ribbon:
-  eureka:
-    enabled: true
-feign:
-  hystrix:
-    enabled: true
-  httpclient:
-    connection-timeout: 10000
+#  datasource:
+#    username: root
+#    password: root
+#    url: jdbc:mysql://127.0.0.1:3306/computer?serverTimezone=GMT%2B8&useUnicode=true&characterEncoding=utf-8&verifyServerCertificate=false&useSSL=false
+#    driver-class-name: com.mysql.cj.jdbc.Driver
+#ribbon:
+#  eureka:
+#    enabled: true
+#feign:
+#  hystrix:
+#    enabled: true
+#  httpclient:
+#    connection-timeout: 10000
 #以下配置已写入apollo，在此写入同样生效，但是apollo的配置会覆盖此配置
 #server:
 #  port: 8764
@@ -86,6 +86,8 @@ feign:
 
 #logging:
 #  config: classpath:logback.xml
+#  level:
+#    root: debug
 
 #spring:
 #  main:

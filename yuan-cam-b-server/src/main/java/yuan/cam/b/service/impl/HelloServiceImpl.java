@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import yuan.cam.b.service.HelloService;
-import yuan.cam.b.util.LogUtil;
 import yuan.cam.b.util.RabbitProducer;
 
 import java.util.UUID;
@@ -28,7 +27,6 @@ public class HelloServiceImpl implements HelloService {
         } else {
             return "没有抢到锁";
         }
-
         if (redisTemplate.boundValueOps("name").get() == null) {
             redisTemplate.boundValueOps("name").set(name);
             redisTemplate.expire("name", 5, TimeUnit.SECONDS);

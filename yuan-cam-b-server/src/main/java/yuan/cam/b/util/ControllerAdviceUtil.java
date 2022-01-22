@@ -12,33 +12,20 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 import yuan.cam.b.commons.Constants;
 import yuan.cam.b.vo.ResultVO;
 
-@ControllerAdvice
-@RestControllerAdvice(basePackages = "yuan.cam.b")
+@ControllerAdvice(basePackageClasses = {yuan.cam.b.export.SourceApi.class})
+//@RestControllerAdvice(basePackageClasses = {yuan.cam.b.export.SourceApi.class})
 public class ControllerAdviceUtil implements ResponseBodyAdvice<Object> {
 
     @Override
     public boolean supports(MethodParameter methodParameter, Class<? extends HttpMessageConverter<?>> aClass) {
         //拦截返回值范围
-        if (Constants.NON_INTERCEPT_NAME.containsKey(methodParameter.getExecutable().getName())) {
-            return false;
-        }
-        return true;
+        return !Constants.NON_INTERCEPT_NAME.containsKey(methodParameter.getExecutable().getName());
     }
 
     @Override
     public Object beforeBodyWrite(Object object, MethodParameter methodParameter, MediaType mediaType, Class<? extends HttpMessageConverter<?>> aClass, ServerHttpRequest serverHttpRequest, ServerHttpResponse serverHttpResponse) {
-        if (object == null) {
-            return new ResultVO(0, "success", null);
-        } else if (object instanceof ResultVO) {
-            return (ResultVO) object;
-        } else if (object instanceof String) {
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.put("statusCode", 0);
-            jsonObject.put("statusMsg", "success");
-            jsonObject.put("result", object.toString());
-            return jsonObject.toJSONString();
-        } else {
-            return new ResultVO(0, "success", object);
-        }
+        JSONObject jsonObject = (JSONObject) object;
+        String statusMsg = Constants.SUCCESS_CODE.equals(jsonObject.getIntValue("status")) ? Constants.SUCCESS : Constants.FAIL;
+        return new ResultVO<>(jsonObject.getIntValue("status"), statusMsg, JSONObject.toJSONString(object));
     }
 }

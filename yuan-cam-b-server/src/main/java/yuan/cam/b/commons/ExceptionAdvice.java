@@ -1,20 +1,21 @@
-package yuan.cam.b.util;
+package yuan.cam.b.commons;
 
-import org.springframework.boot.context.properties.bind.BindException;
+import com.google.common.base.Throwables;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
+import yuan.cam.b.exception.BusinessException;
 import yuan.cam.b.vo.ResultVO;
 
 import java.util.List;
 
-@ControllerAdvice
-public class ExceptionUtil {
+@Slf4j
+@RestControllerAdvice
+public class ExceptionAdvice {
 
-    @ResponseBody
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResultVO exceptionHandler(MethodArgumentNotValidException e) {
         BindingResult bindingResult = e.getBindingResult();
@@ -35,5 +36,14 @@ public class ExceptionUtil {
             }
         }
         return new ResultVO(500, "参数异常", stringBuilder.toString());
+    }
+
+    /**
+     * 兜底的捕获
+     */
+    @ExceptionHandler(Throwable.class)
+    public ResultVO throwableHandler(BusinessException exception){
+        log.error("Internal Server Error, e:{}", Throwables.getStackTraceAsString(exception));
+        return new ResultVO<>(exception.getErrorCode(), exception.getErrorMessage(), null);
     }
 }

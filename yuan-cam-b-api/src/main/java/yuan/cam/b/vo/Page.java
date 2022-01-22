@@ -5,17 +5,12 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class ResultVO<T> {
+public class Page<T> {
 
     /**
-     * 状态码
+     * 总数
      */
-    private Integer statusCode;
-
-    /**
-     * 状态信息
-     */
-    private String statusMsg;
+    private Integer total;
 
     /**
      * 结果

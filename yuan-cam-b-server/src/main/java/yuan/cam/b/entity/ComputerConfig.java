@@ -18,7 +18,7 @@ public class ComputerConfig {
     private Integer id;
 
     /**
-     * 商品名称
+     * 商品品牌
      */
     @Column(name = "brand")
     private String brand;

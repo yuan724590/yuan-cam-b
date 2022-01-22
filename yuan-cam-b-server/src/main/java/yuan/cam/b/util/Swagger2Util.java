@@ -19,7 +19,8 @@ public class Swagger2Util {
         return new Docket(DocumentationType.SWAGGER_2)
                 .apiInfo(apiInfo())
                 .select()
-                .apis(RequestHandlerSelectors.withClassAnnotation(RestController.class))//扫描所有带有api注解的文件
+                //扫描所有带有api注解的文件
+                .apis(RequestHandlerSelectors.withClassAnnotation(RestController.class))
                 .paths(PathSelectors.any())
                 .build();
     }
