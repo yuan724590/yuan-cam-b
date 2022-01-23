@@ -23,6 +23,11 @@ public class Constants {
      */
     public final static Integer SUCCESS_CODE = 0;
 
+    /**
+     * 删除状态
+     */
+    public final static Byte DELETE_STATUS = 1;
+
     public final static String SUCCESS = "success";
     public final static String FAIL = "fail";
     public final static String _ID = "_id";

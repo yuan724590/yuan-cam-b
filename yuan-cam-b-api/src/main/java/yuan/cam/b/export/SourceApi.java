@@ -10,7 +10,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import yuan.cam.b.common.Constants;
 import yuan.cam.b.dto.ComputerConfigDTO;
-import yuan.cam.b.vo.ConfigVO;
+import yuan.cam.b.dto.GoodsInfoDTO;
+import yuan.cam.b.vo.ComputerConfigVO;
+import yuan.cam.b.vo.ResultVO;
 
 import java.util.List;
 
@@ -20,22 +22,18 @@ import java.util.List;
 public interface SourceApi {
 
     @ApiOperation(value = "新增商品信息", response = String.class)
-    @PostMapping(value = "/insert", produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    String insertConfig(@RequestBody @Validated ComputerConfigDTO.InsertConfigDTO reqDTO);
+    @PostMapping(value = "/insert/goods", produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    ResultVO<String> insertGoods(@RequestBody @Validated GoodsInfoDTO dto);
 
     @ApiOperation(value = "删除商品信息", response = String.class)
-    @PostMapping(value = "/delete", produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    String deleteConfig(@RequestBody @Validated ComputerConfigDTO.DeleteConfigDTO reqDTO);
-
-    @ApiOperation(value = "编辑商品信息", response = String.class)
-    @PostMapping(value = "/edit", produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    String editConfig(@RequestBody @Validated ComputerConfigDTO.EditConfigDTO reqDTO);
+    @PostMapping(value = "/del/goods", produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    ResultVO<String> deleteGoods(@RequestBody @Validated ComputerConfigDTO.DeleteConfigDTO dto);
 
     @ApiOperation(value = "通用查询商品信息", response = List.class)
-    @PostMapping(value = "/query", produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    List<ConfigVO> queryDetail(@RequestBody @Validated ComputerConfigDTO.QueryDetailDTO reqDTO);
+    @PostMapping(value = "/query/goods", produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    List<ComputerConfigVO> queryDetail(@RequestBody @Validated ComputerConfigDTO.QueryDetailDTO dto);
 
     @ApiOperation(value = "根据商品名称查询商品信息", response = List.class)
     @PostMapping(value = "/queryByName", produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    List<ConfigVO> queryByName(@RequestBody @Validated ComputerConfigDTO.QueryByNameDTO reqDTO);
+    List<ComputerConfigVO> queryByName(@RequestBody @Validated ComputerConfigDTO.QueryByNameDTO dto);
 }

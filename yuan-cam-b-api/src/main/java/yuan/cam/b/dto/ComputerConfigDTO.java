@@ -49,7 +49,7 @@ public class ComputerConfigDTO {
     public static class DeleteConfigDTO {
         @ApiModelProperty(value = "要删除的id列表", required = true)
         @NotEmpty
-        List<Integer> idList;
+        private List<Integer> idList;
     }
 
     @Data

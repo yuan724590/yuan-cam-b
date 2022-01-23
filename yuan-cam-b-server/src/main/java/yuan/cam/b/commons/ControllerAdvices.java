@@ -1,4 +1,4 @@
-package yuan.cam.b.util;
+package yuan.cam.b.commons;
 
 import com.alibaba.fastjson.JSONObject;
 import org.springframework.core.MethodParameter;
@@ -9,12 +9,11 @@ import org.springframework.http.server.ServerHttpResponse;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
-import yuan.cam.b.commons.Constants;
 import yuan.cam.b.vo.ResultVO;
 
 @ControllerAdvice(basePackageClasses = {yuan.cam.b.export.SourceApi.class})
 //@RestControllerAdvice(basePackageClasses = {yuan.cam.b.export.SourceApi.class})
-public class ControllerAdviceUtil implements ResponseBodyAdvice<Object> {
+public class ControllerAdvices implements ResponseBodyAdvice<Object> {
 
     @Override
     public boolean supports(MethodParameter methodParameter, Class<? extends HttpMessageConverter<?>> aClass) {

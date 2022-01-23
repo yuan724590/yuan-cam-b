@@ -5,17 +5,18 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.session.RowBounds;
 import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.entity.Example;
+import yuan.cam.b.commons.Constants;
+import yuan.cam.b.dto.GoodsInfoDTO;
 import yuan.cam.b.service.SourceService;
 import yuan.cam.b.entity.ComputerConfig;
 import yuan.cam.b.mapper.ComputerConfigMapper;
 import yuan.cam.b.util.CommonUtil;
-import yuan.cam.b.util.LogUtil;
-import yuan.cam.b.vo.ConfigVO;
+import yuan.cam.b.util.CopierUtil;
+import yuan.cam.b.vo.ComputerConfigVO;
 
 import javax.annotation.Resource;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -25,39 +26,37 @@ public class SourceServiceImpl implements SourceService {
     private ComputerConfigMapper computerConfigMapper;
 
     @Override
-    public String insertConfig(ComputerConfig computerConfig, String qid) {
-        if (computerConfig == null) {
-            return "false";
+    public String insertGoods(GoodsInfoDTO dto) {
+        ComputerConfig computerConfig = CopierUtil.copyProperties(dto, ComputerConfig.class);
+        computerConfig.setUpdateTime(CommonUtil.currentSeconds());
+        if(dto.getId() != null && dto.getId() > 0){
+            //如果传了id, 认为是已存在的数据, 进行更新
+            computerConfigMapper.updateByPrimaryKeySelective(computerConfig);
+        }else{
+            //如果没传id, 认为是不存在的数据, 进行新增
+            computerConfig.setCreateTime(CommonUtil.currentSeconds());
+            computerConfigMapper.insertSelective(computerConfig);
         }
-        log.debug("开始进行新增");
-        computerConfigMapper.insert(computerConfig);
-        return "true";
+        return "成功";
     }
 
     @Override
-    public String deleteConfig(List<Integer> idList, String qid) {
-        log.debug("开始进行删除");
+    public String deleteGoods(List<Integer> idList) {
         Example example = new Example(ComputerConfig.class);
         example.createCriteria().andIn("id", idList);
-        computerConfigMapper.deleteByExample(example);
-        return "true";
+        ComputerConfig computerConfig = new ComputerConfig();
+        computerConfig.setDeleted(Constants.DELETE_STATUS);
+        computerConfigMapper.updateByExampleSelective(computerConfig, example);
+        return "删除成功";
     }
 
     @Override
-    public String editConfig(ComputerConfig computerConfig, String qid) {
-        log.debug("开始进行编辑");
-        computerConfigMapper.updateByPrimaryKeySelective(computerConfig);
-        return "true";
-    }
-
-    @Override
-    public List<ConfigVO> queryDetail(Map<String, String> search, Integer page, Integer size, String qid) {
-        log.debug("开始进行查询");
+    public List<ComputerConfigVO> queryDetail(Map<String, String> search, Integer page, Integer size) {
         Example example = new Example(ComputerConfig.class);
         if (search != null && search.size() > 0) {
             Example.Criteria criteria = example.createCriteria();
             for (String key : search.keySet()) {
-                if (key.equals("name")) {
+                if ("goodsName".equals(key)) {
                     criteria.andLike(key, search.get(key));
                 } else {
                     criteria.andEqualTo(key, search.get(key));
@@ -66,23 +65,12 @@ public class SourceServiceImpl implements SourceService {
         }
         int offset = (page - 1) * size;
         List<ComputerConfig> configList = computerConfigMapper.selectByExampleAndRowBounds(example, new RowBounds(offset, size));
-        return configList.stream().map(element -> {
-            ConfigVO configVO = new ConfigVO();
-            configVO.setId(element.getId());
-            configVO.setBrand(element.getBrand());
-            configVO.setType(element.getType());
-            configVO.setGoodsName(element.getGoodsName());
-            configVO.setPrice(element.getPrice());
-            configVO.setFloorPrice(element.getFloorPrice());
-            return configVO;
-        }).collect(Collectors.toList());
+        return CopierUtil.copyobjects(configList, ComputerConfigVO.class);
     }
 
     @Override
-    public List<ConfigVO> queryByName(String goodsName){
-//        ComputerConfig list = computerConfigMapper.queryById(1);
-//        return null;
+    public List<ComputerConfigVO> queryByName(String goodsName){
         List<ComputerConfig> list = computerConfigMapper.queryByName(goodsName);
-        return CommonUtil.batchCopyProperties(list, ConfigVO.class);
+        return CopierUtil.copyobjects(list, ComputerConfigVO.class);
     }
 }

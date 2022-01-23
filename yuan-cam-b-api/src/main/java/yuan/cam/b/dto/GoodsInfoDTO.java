@@ -21,14 +21,14 @@ public class GoodsInfoDTO {
     @Min(1)
     private Integer id;
 
-    @ApiModelProperty(value = "品牌名字")
+    @ApiModelProperty(value = "商品品牌名")
     @NotEmpty
-    private String brand;
+    private String goodsBrand;
 
-    @ApiModelProperty(value = "商品类型")
+    @ApiModelProperty(value = "商品类型 1-CPU 2-主板 3-显卡 4-显示器 5-内存条 6-硬盘")
     @Min(0)
     @NotNull
-    private Byte type;
+    private Byte goodsType;
 
     @ApiModelProperty(value = "商品名称")
     @NotEmpty
@@ -44,17 +44,17 @@ public class GoodsInfoDTO {
 
     @ApiModelProperty(value = "商品图片url")
     @NotEmpty
-    private String url;
+    private String imageUrl;
 
     @ApiModelProperty(value = "商品图片的高度")
     @Min(0)
     @NotNull
-    private Integer height;
+    private Integer imageHeight;
 
     @ApiModelProperty(value = "商品图片的宽度")
     @Min(0)
     @NotNull
-    private Integer width;
+    private Integer imageWidth;
 
     @ApiModelProperty(value = "创建时间")
     private Integer createTime;
