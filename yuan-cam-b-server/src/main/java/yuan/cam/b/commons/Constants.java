@@ -28,6 +28,11 @@ public class Constants {
      */
     public final static Byte DELETE_STATUS = 1;
 
+    /**
+     * 未删除状态
+     */
+    public final static Byte NOT_DELETE_STATUS = 0;
+
     public final static String SUCCESS = "success";
     public final static String FAIL = "fail";
     public final static String _ID = "_id";

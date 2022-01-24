@@ -9,6 +9,7 @@ import yuan.cam.b.dto.GoodsInfoDTO;
 import yuan.cam.b.export.EsApi;
 import yuan.cam.b.service.ESService;
 import yuan.cam.b.util.ResultUtils;
+import yuan.cam.b.vo.BrandCountVO;
 import yuan.cam.b.vo.ComputerConfigVO;
 import yuan.cam.b.vo.Page;
 import yuan.cam.b.vo.ResultVO;
@@ -46,5 +47,10 @@ public class EsController implements EsApi {
     @Override
     public ResultVO<Boolean> queryIsExistById(@RequestBody @Validated EsDTO.QueryIsExistByIdDTO dto){
         return ResultUtils.data(esService.queryIsExistById(dto.getId()));
+    }
+
+    @Override
+    public ResultVO<BrandCountVO> queryGoodsCount(){
+        return ResultUtils.data(esService.queryGoodsCount());
     }
 }

@@ -29,11 +29,11 @@ public interface SourceApi {
     @PostMapping(value = "/del/goods", produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
     ResultVO<String> deleteGoods(@RequestBody @Validated ComputerConfigDTO.DeleteConfigDTO dto);
 
-    @ApiOperation(value = "通用查询商品信息", response = List.class)
+    @ApiOperation(value = "通用查询商品信息", response = ComputerConfigVO.class)
     @PostMapping(value = "/query/goods", produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    List<ComputerConfigVO> queryDetail(@RequestBody @Validated ComputerConfigDTO.QueryDetailDTO dto);
+    ResultVO<List<ComputerConfigVO>> queryDetail(@RequestBody @Validated ComputerConfigDTO.QueryDetailDTO dto);
 
-    @ApiOperation(value = "根据商品名称查询商品信息", response = List.class)
+    @ApiOperation(value = "根据商品名称查询商品信息", response = ComputerConfigVO.class)
     @PostMapping(value = "/queryByName", produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    List<ComputerConfigVO> queryByName(@RequestBody @Validated ComputerConfigDTO.QueryByNameDTO dto);
+    ResultVO<List<ComputerConfigVO>> queryByName(@RequestBody @Validated ComputerConfigDTO.QueryByNameDTO dto);
 }

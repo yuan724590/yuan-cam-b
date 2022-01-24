@@ -33,12 +33,12 @@ public class SourceController implements SourceApi {
     }
 
     @Override
-    public List<ComputerConfigVO> queryDetail(@RequestBody @Validated ComputerConfigDTO.QueryDetailDTO dto) {
-        return sourceService.queryDetail(dto.getSearch(), dto.getPage(), dto.getSize());
+    public ResultVO<List<ComputerConfigVO>> queryDetail(@RequestBody @Validated ComputerConfigDTO.QueryDetailDTO dto) {
+        return ResultUtils.data(sourceService.queryDetail(dto.getSearch(), dto.getPage(), dto.getSize()));
     }
 
     @Override
-    public List<ComputerConfigVO> queryByName(@RequestBody @Validated ComputerConfigDTO.QueryByNameDTO dto){
-        return sourceService.queryByName(dto.getGoodsName());
+    public ResultVO<List<ComputerConfigVO>> queryByName(@RequestBody @Validated ComputerConfigDTO.QueryByNameDTO dto){
+        return ResultUtils.data(sourceService.queryByName(dto.getGoodsName()));
     }
 }

@@ -19,7 +19,12 @@ import org.elasticsearch.index.reindex.*;
 import org.elasticsearch.script.Script;
 import org.elasticsearch.script.ScriptType;
 import org.elasticsearch.search.SearchHit;
+import org.elasticsearch.search.aggregations.AggregationBuilders;
+import org.elasticsearch.search.aggregations.bucket.terms.Terms;
+import org.elasticsearch.search.aggregations.bucket.terms.TermsAggregationBuilder;
+import org.elasticsearch.search.aggregations.metrics.TopHitsAggregationBuilder;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
+import org.elasticsearch.search.sort.SortOrder;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import yuan.cam.b.commons.Constants;
@@ -29,6 +34,7 @@ import yuan.cam.b.dto.GoodsInfoDTO;
 import yuan.cam.b.exception.BusinessException;
 import yuan.cam.b.exception.GoodsExceptionEnum;
 import yuan.cam.b.service.ESService;
+import yuan.cam.b.vo.BrandCountVO;
 import yuan.cam.b.vo.ComputerConfigVO;
 import yuan.cam.b.vo.Page;
 
@@ -37,6 +43,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 
@@ -58,6 +65,7 @@ public class ESServiceImpl implements ESService {
         try {
             dto.setCreateTime(LocalDateTime.now().getSecond());
             dto.setUpdateTime(LocalDateTime.now().getSecond());
+            dto.setDeleted(Constants.NOT_DELETE_STATUS);
             //新增数据
             esCommonService.insert(Constants.COMPUTER_CONFIG_INDEX, dto);
         } catch (Exception e) {
@@ -196,5 +204,42 @@ public class ESServiceImpl implements ESService {
     public Boolean queryIsExistById(Integer id) {
         //通过id查询是否存在
         return esCommonService.queryIsExistById(Constants.COMPUTER_CONFIG_INDEX, id);
+    }
+
+    @Override
+    public BrandCountVO queryGoodsCount(){
+        try{
+            SearchRequest searchRequest = new SearchRequest(Constants.COMPUTER_CONFIG_INDEX);
+            SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
+            searchSourceBuilder.query(QueryBuilders.termQuery("deleted", 0));
+            searchRequest.source(searchSourceBuilder);
+            String termsName = UUID.randomUUID().toString();
+            TermsAggregationBuilder aggregationBuilder = AggregationBuilders.terms(termsName).field("goodsBrand");
+            TopHitsAggregationBuilder topHitsAggregationBuilder = AggregationBuilders.topHits("goodsBrandHits")
+                    .size(1)
+                    .sort("createTime", SortOrder.DESC)
+                    .fetchSource(new String[]{"id"}, null);
+            aggregationBuilder.subAggregation(topHitsAggregationBuilder);
+            searchSourceBuilder.aggregation(aggregationBuilder);
+            SearchResponse searchResponse = restHighLevelClient.search(searchRequest, RequestOptions.DEFAULT);
+            //组装聚合数据
+            return assemblyData(searchResponse, termsName);
+        }catch (Exception e){
+            log.error("firstQueryEsByScroll-请求es异常, e:{}", Throwables.getStackTraceAsString(e));
+        }
+        return new BrandCountVO();
+    }
+
+    /**
+     * 组装聚合数据
+     */
+    private BrandCountVO assemblyData(SearchResponse searchResponse, String termsName){
+        Terms terms = searchResponse.getAggregations().get(termsName);
+        List<? extends Terms.Bucket> list = terms.getBuckets();
+        List<BrandCountVO.BrandCountInfoVO> infoList = new ArrayList<>();
+        for(Terms.Bucket bucket : list){
+            infoList.add(new BrandCountVO.BrandCountInfoVO(bucket.getKey().toString(), (int)bucket.getDocCount()));
+        }
+        return new BrandCountVO(infoList);
     }
 }

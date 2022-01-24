@@ -56,6 +56,9 @@ public class GoodsInfoDTO {
     @NotNull
     private Integer imageWidth;
 
+    @ApiModelProperty(value = "删除状态 0-未删除 1-已删除")
+    private Byte deleted;
+
     @ApiModelProperty(value = "创建时间")
     private Integer createTime;
 

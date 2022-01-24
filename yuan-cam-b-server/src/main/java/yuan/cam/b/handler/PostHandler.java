@@ -107,7 +107,7 @@ public class PostHandler extends IJobHandler implements Serializable {
      * 获取当前价格
      */
     private BigDecimal getCurrentPrice(ComputerConfigVO computerConfig) throws Exception{
-        String key = computerConfig.getBrand() + " " + computerConfig.getType() + " " + computerConfig.getGoodsName();
+        String key = computerConfig.getGoodsBrand() + " " + computerConfig.getGoodsType() + " " + computerConfig.getGoodsName();
         String url = JD_URL.replaceAll("\\{\\}", URLEncoder.encode(key, Constants.UTF_8));
         connection = connection.url(url).timeout(TIME_OUT);
         Document doc = connection.get();
