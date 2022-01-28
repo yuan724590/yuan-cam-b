@@ -1,4 +1,4 @@
-package yuan.cam.b.util;
+package yuan.cam.b.configuration;
 
 import com.xxl.job.core.executor.impl.XxlJobSpringExecutor;
 import org.slf4j.Logger;
@@ -10,8 +10,8 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @ComponentScan(basePackages = "yuan.cam.b.handler")
-public class XXLJobUtil {
-    private Logger logger = LoggerFactory.getLogger(XXLJobUtil.class);
+public class XXLJobConfiguration {
+    private Logger logger = LoggerFactory.getLogger(XXLJobConfiguration.class);
 
     @Value("${xxl.job.admin.addresses}")
     private String adminAddresses;

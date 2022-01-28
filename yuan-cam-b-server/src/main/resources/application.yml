@@ -22,6 +22,9 @@ spring:
             - Path=/baidu/**
           filters:
             - StripPrefix=1
+#  elasticsearch:
+#    host: 127.0.0.1
+#    port: 9200
 #  datasource:
 #    username: root
 #    password: root
@@ -36,6 +39,28 @@ spring:
 #  httpclient:
 #    connection-timeout: 10000
 #以下配置已写入apollo，在此写入同样生效，但是apollo的配置会覆盖此配置
+#kafka:
+#  broker-list: 127.0.0.1:9092
+#  producer:
+#    #发送失败后的重试次数，默认0
+#    retries: 1
+#    #以字节为单位控制默认的批量大小
+#    batch-size: 0
+#    #延迟时间-毫秒
+#    linger: 1
+#    #缓冲等待发送到服务器的记录的总内存字节数
+#    buffer-memory: 33554432
+#    #实现Serializer接口的序列化类键
+##    key-serializer: org.apache.kafka.common.serialization.StringSerializer
+#    #实现Serializer接口的序列化类值
+##    value-serializer: org.apache.kafka.common.serialization.StringSerializer
+#  consumer:
+#    #消费者组id
+#    group-id: example
+#    #是否自动提交偏移量
+#    enable-auto-commit: false
+#    #客户端消费的会话超时时间-毫秒
+#    session-timeout: 10000
 #server:
 #  port: 8764
 #  serviceUrl:
