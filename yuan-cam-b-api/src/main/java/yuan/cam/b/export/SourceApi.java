@@ -36,4 +36,8 @@ public interface SourceApi {
     @ApiOperation(value = "根据商品名称查询商品信息", response = ComputerConfigVO.class)
     @PostMapping(value = "/queryByName", produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
     ResultVO<List<ComputerConfigVO>> queryByName(@RequestBody @Validated ComputerConfigDTO.QueryByNameDTO dto);
+
+    @ApiOperation(value = "随机获取商品", response = ComputerConfigVO.class)
+    @PostMapping(value = "/random/acquisition/goods", produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    ResultVO<List<ComputerConfigVO>> randomAcquisitionGoods();
 }

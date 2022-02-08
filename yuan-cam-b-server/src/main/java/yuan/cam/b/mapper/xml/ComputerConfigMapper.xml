@@ -19,4 +19,8 @@
     <select id="queryByName" resultMap="BaseResultMap" resultType="java.util.List">
         select * from computer_config where goods_name like CONCAT('%', #{goodsName}, '%')
     </select>
+
+    <select id="randomAcquisitionGoods" resultMap="BaseResultMap" resultType="java.util.List">
+        SELECT * FROM `computer_config` WHERE deleted = 0 ORDER BY RAND() LIMIT 10;
+    </select>
 </mapper>

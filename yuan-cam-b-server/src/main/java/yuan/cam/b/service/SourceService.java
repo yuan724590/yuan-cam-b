@@ -27,4 +27,9 @@ public interface SourceService {
      * 根据商品名称查询商品信息
      */
     List<ComputerConfigVO> queryByName(String goodsName);
+
+    /**
+     * 随机获取商品
+     */
+    List<ComputerConfigVO> randomAcquisitionGoods();
 }

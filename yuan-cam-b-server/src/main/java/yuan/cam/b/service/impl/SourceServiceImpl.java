@@ -73,4 +73,10 @@ public class SourceServiceImpl implements SourceService {
         List<ComputerConfig> list = computerConfigMapper.queryByName(goodsName);
         return CopierUtil.copyobjects(list, ComputerConfigVO.class);
     }
+
+    @Override
+    public List<ComputerConfigVO> randomAcquisitionGoods(){
+        List<ComputerConfig> list = computerConfigMapper.randomAcquisitionGoods();
+        return CopierUtil.copyobjects(list, ComputerConfigVO.class);
+    }
 }

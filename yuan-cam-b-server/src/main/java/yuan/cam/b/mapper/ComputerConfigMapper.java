@@ -20,4 +20,9 @@ public interface ComputerConfigMapper extends Mapper<ComputerConfig> {
      * 根据商品名称查询商品信息
      */
     List<ComputerConfig> queryByName(@Param("goodsName") String goodsName);
+
+    /**
+     * 随机获取商品
+     */
+    List<ComputerConfig> randomAcquisitionGoods();
 }

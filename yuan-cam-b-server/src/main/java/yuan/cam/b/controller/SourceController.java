@@ -41,4 +41,9 @@ public class SourceController implements SourceApi {
     public ResultVO<List<ComputerConfigVO>> queryByName(@RequestBody @Validated ComputerConfigDTO.QueryByNameDTO dto){
         return ResultUtils.data(sourceService.queryByName(dto.getGoodsName()));
     }
+
+    @Override
+    public ResultVO<List<ComputerConfigVO>> randomAcquisitionGoods(){
+        return ResultUtils.data(sourceService.randomAcquisitionGoods());
+    }
 }
