@@ -38,5 +38,8 @@ public class Constants {
     public final static String _ID = "_id";
     public final static String ID = "id";
     public final static String GOODS_NAME = "goodsName";
+    public final static String GOODS_BRAND = "goodsBrand";
+    public final static String CREATE_TIME = "createTime";
     public final static String UTF_8 = "UTF-8";
+    public final static String DELETED = "deleted";
 }

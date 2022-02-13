@@ -46,4 +46,8 @@ public interface EsApi {
     @ApiOperation(value = "查询每个品牌未删除的商品个数", response = Boolean.class)
     @PostMapping(value = "/es/query/goodsCount", produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
     ResultVO<BrandCountVO> queryGoodsCount();
+
+    @ApiOperation(value = "查询每个品牌未删除的商品个数", response = Boolean.class)
+    @PostMapping(value = "/es/random/acquisition/goods", produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    ResultVO<Page<List<ComputerConfigVO>>> randomAcquisitionGoods(@RequestBody @Validated EsDTO.RandomAcquisitionGoodsDTO dto);
 }

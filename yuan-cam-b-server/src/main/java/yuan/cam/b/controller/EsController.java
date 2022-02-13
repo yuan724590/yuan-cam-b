@@ -53,4 +53,9 @@ public class EsController implements EsApi {
     public ResultVO<BrandCountVO> queryGoodsCount(){
         return ResultUtils.data(esService.queryGoodsCount());
     }
+
+    @Override
+    public ResultVO<Page<List<ComputerConfigVO>>> randomAcquisitionGoods(@RequestBody @Validated EsDTO.RandomAcquisitionGoodsDTO dto){
+        return ResultUtils.data(esService.randomAcquisitionGoods(dto.getPage(), dto.getSize()));
+    }
 }

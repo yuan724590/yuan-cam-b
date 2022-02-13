@@ -13,8 +13,10 @@ import org.elasticsearch.action.search.SearchScrollRequest;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.common.unit.TimeValue;
-import org.elasticsearch.index.query.BoolQueryBuilder;
-import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.index.query.*;
+import org.elasticsearch.index.query.functionscore.FunctionScoreQueryBuilder;
+import org.elasticsearch.index.query.functionscore.RandomScoreFunctionBuilder;
+import org.elasticsearch.index.query.functionscore.ScoreFunctionBuilders;
 import org.elasticsearch.index.reindex.*;
 import org.elasticsearch.script.Script;
 import org.elasticsearch.script.ScriptType;
@@ -144,6 +146,7 @@ public class ESServiceImpl implements ESService {
         if(CollectionUtils.isNotEmpty(dto.getIdList())){
             boolQueryBuilder.must(QueryBuilders.termsQuery(Constants._ID, dto.getIdList()));
         }
+        boolQueryBuilder.must(QueryBuilders.matchQuery(Constants.DELETED, Constants.NOT_DELETE_STATUS));
         return boolQueryBuilder;
     }
 
@@ -211,14 +214,14 @@ public class ESServiceImpl implements ESService {
         try{
             SearchRequest searchRequest = new SearchRequest(Constants.COMPUTER_CONFIG_INDEX);
             SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
-            searchSourceBuilder.query(QueryBuilders.termQuery("deleted", 0));
+            searchSourceBuilder.query(QueryBuilders.termQuery(Constants.DELETED, Constants.NOT_DELETE_STATUS));
             searchRequest.source(searchSourceBuilder);
             String termsName = UUID.randomUUID().toString();
-            TermsAggregationBuilder aggregationBuilder = AggregationBuilders.terms(termsName).field("goodsBrand");
+            TermsAggregationBuilder aggregationBuilder = AggregationBuilders.terms(termsName).field(Constants.GOODS_BRAND);
             TopHitsAggregationBuilder topHitsAggregationBuilder = AggregationBuilders.topHits("goodsBrandHits")
                     .size(1)
-                    .sort("createTime", SortOrder.DESC)
-                    .fetchSource(new String[]{"id"}, null);
+                    .sort(Constants.CREATE_TIME, SortOrder.DESC)
+                    .fetchSource(new String[]{Constants.ID}, null);
             aggregationBuilder.subAggregation(topHitsAggregationBuilder);
             searchSourceBuilder.aggregation(aggregationBuilder);
             SearchResponse searchResponse = restHighLevelClient.search(searchRequest, RequestOptions.DEFAULT);
@@ -241,5 +244,35 @@ public class ESServiceImpl implements ESService {
             infoList.add(new BrandCountVO.BrandCountInfoVO(bucket.getKey().toString(), (int)bucket.getDocCount()));
         }
         return new BrandCountVO(infoList);
+    }
+
+    @Override
+    public Page<List<ComputerConfigVO>> randomAcquisitionGoods(Integer page, Integer size){
+        try {
+            SearchRequest searchRequest = new SearchRequest(Constants.COMPUTER_CONFIG_INDEX);
+            SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
+            //组装查询es的条件
+            MatchPhraseQueryBuilder matchPhraseQueryBuilder = new MatchPhraseQueryBuilder(Constants.GOODS_NAME, "英特尔");
+            //设置根据_seq_no字段(版本号,没更新一次自增1)进行随机, 不设置时默认为_id字段, 设置这个function的权重是23
+            RandomScoreFunctionBuilder randomScoreFunctionBuilder
+                    = ScoreFunctionBuilders.randomFunction().seed(System.currentTimeMillis()).setField("_seq_no").setWeight(23);
+            //设置随机数据的查询条件, 本质上此处随机无意义
+            TermQueryBuilder termQueryBuilder1 = new TermQueryBuilder(Constants.DELETED, Constants.NOT_DELETE_STATUS);
+            FunctionScoreQueryBuilder.FilterFunctionBuilder filterFunctionBuilder
+                    = new FunctionScoreQueryBuilder.FilterFunctionBuilder(termQueryBuilder1, randomScoreFunctionBuilder);
+            FunctionScoreQueryBuilder.FilterFunctionBuilder[] filterFunctionBuilders = new FunctionScoreQueryBuilder.FilterFunctionBuilder[]{filterFunctionBuilder};
+            FunctionScoreQueryBuilder functionScoreQueryBuilder = new FunctionScoreQueryBuilder(matchPhraseQueryBuilder, filterFunctionBuilders);
+
+            searchSourceBuilder.query(functionScoreQueryBuilder);
+            searchSourceBuilder.from((page - 1) * size);
+            searchSourceBuilder.size(size);
+            searchRequest.source(searchSourceBuilder);
+            SearchResponse searchResponse = restHighLevelClient.search(searchRequest, RequestOptions.DEFAULT);
+            //封装es的请求结果
+            return getListByResponse(searchResponse);
+        } catch (Exception e) {
+            log.error("请求es异常, 入参page:{}, size:{}, e:{}", page, size, Throwables.getStackTraceAsString(e));
+        }
+        return new Page<>(0, Collections.emptyList());
     }
 }

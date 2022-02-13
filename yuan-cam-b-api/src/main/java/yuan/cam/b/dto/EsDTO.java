@@ -60,4 +60,22 @@ public class EsDTO {
         @ApiModelProperty(value = "商品ID", required = true)
         private Integer id;
     }
+
+    @Data
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @ApiModel("ComputerConfigDTO.RandomAcquisitionGoodsDTO")
+    public static class RandomAcquisitionGoodsDTO {
+
+        @NotNull
+        @Min(1)
+        @ApiModelProperty(value = "页码", required = true)
+        private Integer page;
+
+        @NotNull
+        @Min(1)
+        @ApiModelProperty(value = "页面大小", required = true)
+        private Integer size;
+    }
 }

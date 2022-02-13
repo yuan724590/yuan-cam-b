@@ -49,4 +49,9 @@ public interface ESService {
      * 查询每个品牌未删除的商品个数
      */
     BrandCountVO queryGoodsCount();
+
+    /**
+     * 随机获取商品
+     */
+    Page<List<ComputerConfigVO>> randomAcquisitionGoods(Integer page, Integer size);
 }
