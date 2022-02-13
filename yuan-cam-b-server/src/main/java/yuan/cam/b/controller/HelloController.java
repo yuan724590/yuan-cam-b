@@ -66,4 +66,10 @@ public class HelloController implements GetHello {
     private String hiErr() {
         return "sorry,have a error";
     }
+
+    @Override
+    public String declare(){
+        helloService.sayHelloAgain();
+        return "ok";
+    }
 }

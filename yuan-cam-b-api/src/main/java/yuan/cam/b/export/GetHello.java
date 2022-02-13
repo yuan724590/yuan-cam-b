@@ -36,4 +36,7 @@ public interface GetHello {
 
     @PostMapping(value = "/hello/topic", produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
     void helloTopic(@RequestBody @Validated HelloDTO.HelloTopicDTO reqDTO);
+
+    @GetMapping("/declare")
+    String declare();
 }
