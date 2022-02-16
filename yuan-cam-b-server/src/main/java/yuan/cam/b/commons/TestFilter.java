@@ -12,6 +12,7 @@ import java.io.IOException;
 //@Component
 @WebFilter(filterName = "testFilter",urlPatterns = {"/declare"})
 public class TestFilter implements Filter {
+
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
 
@@ -22,7 +23,7 @@ public class TestFilter implements Filter {
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         HttpServletResponse response = (HttpServletResponse) servletResponse;
 
-        System.out.println("TestFilter,"+request.getRequestURI());
+        System.out.println("TestFilter," + request.getRequestURI());
 
         //执行
         filterChain.doFilter(servletRequest, servletResponse);
