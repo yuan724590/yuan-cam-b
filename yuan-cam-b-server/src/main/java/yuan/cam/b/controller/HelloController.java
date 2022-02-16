@@ -70,6 +70,7 @@ public class HelloController implements GetHello {
     @Override
     public String declare(){
         helloService.sayHelloAgain();
+        helloService.rest("aa");
         return "ok";
     }
 }

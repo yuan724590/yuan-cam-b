@@ -5,6 +5,7 @@ import com.ctrip.framework.apollo.spring.annotation.EnableApolloConfig;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.web.servlet.ServletComponentScan;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.netflix.hystrix.EnableHystrix;
 import org.springframework.cloud.netflix.hystrix.dashboard.EnableHystrixDashboard;
@@ -24,6 +25,7 @@ import tk.mybatis.spring.annotation.MapperScan;
 @EnableHystrix
 // 断路器仪表盘
 @EnableHystrixDashboard
+@ServletComponentScan
 public class Application {
 
     public static void main(String[] args) {
