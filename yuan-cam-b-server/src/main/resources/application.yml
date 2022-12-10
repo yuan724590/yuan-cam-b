@@ -75,7 +75,7 @@ spring:
 #  type-aliases-package: yuan.cam.b.entity
 #  datasource:
 #    url: jdbc:mysql://127.0.0.1:3306/computer?serverTimezone=GMT%2B8&useUnicode=true&characterEncoding=utf-8&verifyServerCertificate=false&useSSL=false
-#    username: roodt
+#    username: root
 #    password: root
 #    driver-class-name: com.mysql.jdbc.Driver
 #  cloud:

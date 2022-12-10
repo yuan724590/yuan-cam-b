@@ -41,7 +41,6 @@ import yuan.cam.b.vo.ComputerConfigVO;
 import yuan.cam.b.vo.Page;
 
 import javax.annotation.Resource;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -65,8 +64,8 @@ public class ESServiceImpl implements ESService {
     @Override
     public String insertGoods(GoodsInfoDTO dto) {
         try {
-            dto.setCreateTime(LocalDateTime.now().getSecond());
-            dto.setUpdateTime(LocalDateTime.now().getSecond());
+            dto.setCreateTime((int)(System.currentTimeMillis() / 1000));
+            dto.setUpdateTime((int)(System.currentTimeMillis() / 1000));
             dto.setDeleted(Constants.NOT_DELETE_STATUS);
             //新增数据
             esCommonService.insert(Constants.COMPUTER_CONFIG_INDEX, dto);
