@@ -16,7 +16,7 @@ public class ComputerConfig {
      */
     @Id
     @GeneratedValue(generator = "JDBC")
-    private Integer id;
+    private Long id;
 
     /**
      * 商品品牌

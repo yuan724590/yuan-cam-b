@@ -22,6 +22,33 @@ spring:
             - Path=/baidu/**
           filters:
             - StripPrefix=1
+  shardingsphere:
+    datasource:
+      names: source1,source2
+      source1:
+        type: com.alibaba.druid.pool.DruidDataSource
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        url: jdbc:mysql://127.0.0.1:3306/computer?serverTimezone=GMT%2B8&useUnicode=true&characterEncoding=utf-8&verifyServerCertificate=false&useSSL=false
+        username: root
+        password: root
+      source2:
+        type: com.alibaba.druid.pool.DruidDataSource
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        url: jdbc:mysql://127.0.0.1:3306/computer?serverTimezone=GMT%2B8&useUnicode=true&characterEncoding=utf-8&verifyServerCertificate=false&useSSL=false
+        username: root
+        password: root
+    sharding:
+      tables:
+        computer_config:
+          actual-data-nodes: source1.computer_config$->{0..1}
+          table-strategy:
+            inline:
+              sharding-column: id
+              algorithm-expression: computer_config$->{id % 2}
+    props:
+      sql:
+        show: true
+
 #  elasticsearch:
 #    host: 127.0.0.1
 #    port: 9200

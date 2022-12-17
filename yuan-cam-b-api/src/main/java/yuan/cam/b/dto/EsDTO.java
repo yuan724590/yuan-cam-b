@@ -23,7 +23,7 @@ public class EsDTO {
 
         @ApiModelProperty(value = "要删除的id列表", required = true)
         @NotEmpty
-        private List<Integer> idList;
+        private List<Long> idList;
     }
 
     @Data
@@ -34,7 +34,7 @@ public class EsDTO {
     public static class ESQueryGoodsDTO {
 
         @ApiModelProperty(value = "主键id列表", required = true)
-        private List<Integer> idList;
+        private List<Long> idList;
 
         @ApiModelProperty(value = "商品名字", required = true)
         private String goodsName;
@@ -58,7 +58,7 @@ public class EsDTO {
     public static class QueryIsExistByIdDTO {
 
         @ApiModelProperty(value = "商品ID", required = true)
-        private Integer id;
+        private Long id;
     }
 
     @Data

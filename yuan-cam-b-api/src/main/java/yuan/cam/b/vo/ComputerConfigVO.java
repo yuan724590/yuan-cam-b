@@ -9,7 +9,7 @@ import java.math.BigDecimal;
 public class ComputerConfigVO {
 
     @ApiModelProperty("商品id")
-    private Integer id;
+    private Long id;
 
     @ApiModelProperty("商品品牌名")
     private String goodsBrand;

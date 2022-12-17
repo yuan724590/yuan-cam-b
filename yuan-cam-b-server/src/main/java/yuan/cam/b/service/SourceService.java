@@ -16,7 +16,7 @@ public interface SourceService {
     /**
      * 删除商品信息
      */
-    String deleteGoods(List<Integer> idList);
+    String deleteGoods(List<Long> idList);
 
     /**
      * 通用查询商品信息

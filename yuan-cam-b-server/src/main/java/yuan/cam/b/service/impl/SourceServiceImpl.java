@@ -12,6 +12,7 @@ import yuan.cam.b.entity.ComputerConfig;
 import yuan.cam.b.mapper.ComputerConfigMapper;
 import yuan.cam.b.util.CommonUtil;
 import yuan.cam.b.util.CopierUtil;
+import yuan.cam.b.util.IdWorkerUtil;
 import yuan.cam.b.vo.ComputerConfigVO;
 
 import javax.annotation.Resource;
@@ -35,13 +36,14 @@ public class SourceServiceImpl implements SourceService {
         }else{
             //如果没传id, 认为是不存在的数据, 进行新增
             computerConfig.setCreateTime(CommonUtil.currentSeconds());
+            computerConfig.setId(IdWorkerUtil.getId());
             computerConfigMapper.insertSelective(computerConfig);
         }
         return "成功";
     }
 
     @Override
-    public String deleteGoods(List<Integer> idList) {
+    public String deleteGoods(List<Long> idList) {
         Example example = new Example(ComputerConfig.class);
         example.createCriteria().andIn("id", idList);
         ComputerConfig computerConfig = new ComputerConfig();

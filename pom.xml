@@ -54,9 +54,23 @@
         <zipkin.okhttp3.version>2.12.0</zipkin.okhttp3.version>
         <commons.collections.version>3.2.2</commons.collections.version>
         <canal.client.version>1.1.4</canal.client.version>
+        <sharding.jdbc.version>4.1.1</sharding.jdbc.version>
+        <alibaba.druid.version>1.1.21</alibaba.druid.version>
     </properties>
 
     <dependencies>
+        <dependency>
+            <groupId>org.apache.shardingsphere</groupId>
+            <artifactId>sharding-jdbc-spring-boot-starter</artifactId>
+            <version>${sharding.jdbc.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>druid</artifactId>
+            <version>${alibaba.druid.version}</version>
+        </dependency>
+
 
         <dependency>
             <groupId>com.alibaba.otter</groupId>
